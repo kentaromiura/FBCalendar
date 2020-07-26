@@ -17,7 +17,7 @@ I'm not attaching the screenshot but the solution should be close enough.
 
 
 Notable things from this repo:
-- I used no libraries, but they allow to use any (jQuery or MooTools were in the suggested example, funnily they didn't suggest React even if it was already motion).
+- I used no libraries, but they allow to use any (jQuery or MooTools were in the suggested example, funnily they didn't suggest React even if it was already getting motion).
 - I made a build script from the tools I was using at the time, notably I used wrapup from MooTools and my singlejs that I wrote for using WebComponents.
 - Given they wanted compatibility I only used templates from webcomponents and provided with fallbacks
 - The solution works on IE7 if you use the file in the IE folder, I describe below what I should've done to support IE6, this is funny since it was already 2004, I believe my logic was that if it works on IE6 it should work everywhere.
