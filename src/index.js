@@ -1,12 +1,12 @@
 var DateEvents = require('./DateEvents'),
   Calendar = require('./View/Calendar'),
-  YardStick = require('./View/YardStick'),
+  YardStick = require('./View/Yardstick'),
   calendar
 
 global.layOutDay = function layOutDay(events) {
   var dateEvents = new DateEvents(events)
   if (!calendar) { // can only happen before onload
-    setTimeout(function() {
+    setTimeout(function () {
       layOutDay(events)
     }, 300)
   } else {
@@ -14,7 +14,7 @@ global.layOutDay = function layOutDay(events) {
   }
 }
 
-global.onload = function() {
+global.onload = function () {
   var body = document.getElementById('body'),
     requiredInput = [{
       start: 30,
