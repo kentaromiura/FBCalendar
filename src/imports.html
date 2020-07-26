@@ -1,0 +1,94 @@
+<style>
+template{display:none}
+html, body, div, h1, h2 {
+/* stoopid reset */
+  margin:0;
+  border:0;
+  padding:0;
+}
+html, body{
+	height:100%;
+}
+/* end of stoopid reset */
+#container {
+  position: relative;
+  left:75px;
+  width: 620px;
+  height: 720px;
+  padding:0 10px;
+  background: rgb(236, 236, 236);
+  border-left: 1px solid rgb(214, 214, 214);
+}
+#container .content{
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+body{
+	padding: 1em;
+}
+#container .content > div {
+	position: absolute;
+  box-sizing: border-box;
+  border-left: 4px solid rgb(75, 110, 169);
+  border-width: 0 0 0 4px;
+	background-color: white;
+}
+#container .content > div > div{
+  overflow: hidden;
+  box-sizing: border-box;
+  border: 1px solid rgb(214, 214, 214);
+  height: 100%;
+  width: 100%;
+  border-left:0;
+}
+
+#container .content > div h1{
+  font-size:14px;
+  color: rgb(75, 110, 169);
+	text-indent:10px;
+	margin-top:10px;
+	font-family: Helvetica, Arial;
+	font-weight: bold;
+	white-space: nowrap;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+
+}
+
+#container .content > div h2{
+  font-size:11px;
+  color: rgb(131, 131, 131);
+  text-indent:10px;
+  font-family: Helvetica, Arial;
+  font-weight: lighter;
+	white-space: nowrap;
+		-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+
+}
+
+#body{
+  background-color: white;
+}
+
+.yardstick{
+  position: absolute;
+}
+.yardstick.hours, .yardstick.half-hours {
+    position:relative;
+    height: 30px;
+    text-align: right;
+    font-family: Helvetica, Arial;
+    color: rgb(104,104,104);
+    top: -0.5em;
+}
+.yardstick.half-hours, .meridian{
+  font-variant: small-caps;
+  color: rgb(166,166,166);
+  font-size:x-small;
+}
+</style>
+<link rel=import href="View/calendar.html"></link>
+<link rel=import href="View/event.html"></link>
+<link rel=import href="View/yardstick.html"></link>

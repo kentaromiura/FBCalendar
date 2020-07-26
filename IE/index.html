@@ -1,0 +1,288 @@
+<html><head>
+		<meta charset="UTF-8">
+	<script>
+if (!document.head) {
+  document.head = document.getElementsByTagName('head')[0]
+}
+if (![].forEach) {
+  Array.prototype.forEach = function(callback) {
+    for (var i = 0, max = this.length; i < max; i++) {
+      callback(this[i], i)
+    }
+  }
+}
+if (![].some) {
+  Array.prototype.some = function(callback) {
+    for (var i = 0, max = this.length; i < max; i++) {
+      if (callback(this[i], i)) return true
+    }
+    return false
+  }
+}
+if (![].map) {
+  Array.prototype.map = function(callback) {
+    var output = []
+    for (var i = 0, max = this.length; i < max; i++) {
+      output.push(callback(this[i], i))
+    }
+    return output
+  }
+}	</script>	<style>template{display:none}body,div,h1,h2,html{margin:0;border:0;padding:0}body,html{height:100%}#container{position:relative;left:75px;width:620px;height:720px;padding:0 10px;background:#ececec;border-left:1px solid #d6d6d6}#container .content{position:relative;width:100%;height:100%}body{padding:1em}#container .content>div{position:absolute;box-sizing:border-box;border-left:4px solid #4b6ea9;border-width:0 0 0 4px;background-color:#fff}#container .content>div>div{overflow:hidden;box-sizing:border-box;border:1px solid #d6d6d6;height:100%;width:100%;border-left:0}#container .content>div h1{font-size:14px;color:#4b6ea9;text-indent:10px;margin-top:10px;font-family:Helvetica,Arial;font-weight:700;white-space:nowrap;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}#container .content>div h2{font-size:11px;color:#838383;text-indent:10px;font-family:Helvetica,Arial;font-weight:lighter;white-space:nowrap;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}#body{background-color:#fff}.yardstick{position:absolute}.yardstick.half-hours,.yardstick.hours{position:relative;height:30px;text-align:right;font-family:Helvetica,Arial;color:#686868;top:-.5em}.meridian,.yardstick.half-hours{font-variant:small-caps;color:#a6a6a6;font-size:x-small}</style>
+<script type="text/template" id="template-calendar"><div id="container"><div class="content"></div></div></script>
+<script type="text/template" id="template-event"><div><h1>Sample Item #{index}</h1><h2>Sample Location</h2></div></script>
+<script type="text/template" id="template-yardstick"><div class="yardstick"></div><div class="yardstick hours">{time}:00 <span class="meridian">{meridian}</span></div><div class="yardstick half-hours">{time}:30</div></script>
+		<script type="text/javascript">(function (modules, global) {
+    var cache = {}, require = function (id) {
+            var module = cache[id];
+            if (!module) {
+                module = cache[id] = {};
+                var exports = module.exports = {};
+                modules[id].call(exports, require, module, exports, global);
+            }
+            return module.exports;
+        };
+    require('0');
+}({
+    '0': function (require, module, exports, global) {
+        var DateEvents = require('1'), Calendar = require('2'), YardStick = require('3'), calendar;
+        global.layOutDay = function layOutDay(events) {
+            var dateEvents = new DateEvents(events);
+            if (!calendar) {
+                setTimeout(function () {
+                    layOutDay(events);
+                }, 300);
+            } else {
+                calendar.plot(dateEvents);
+            }
+        };
+        global.onload = function () {
+            var body = document.getElementById('body'), requiredInput = [
+                    {
+                        start: 30,
+                        end: 150
+                    },
+                    {
+                        start: 540,
+                        end: 600
+                    },
+                    {
+                        start: 560,
+                        end: 620
+                    },
+                    {
+                        start: 610,
+                        end: 670
+                    }
+                ];
+            YardStick(body);
+            calendar = new Calendar(body);
+            layOutDay(requiredInput);
+        };
+    },
+    '1': function (require, module, exports, global) {
+        var DateEvent = require('4'), STRATEGIES = require('5'), isArray = require('6');
+        function DateEvents(events) {
+            if (!isArray(events))
+                throw new Error('DateEvents expect an Array');
+            this.groups = groupify(events.map(STRATEGIES.promoteTo(DateEvent)).sort(STRATEGIES.sortFirstEventsFirst));
+        }
+        function groupify(ungrouped) {
+            var output = [[]], index = 0, currentGroup = output[index];
+            if (ungrouped.length) {
+                currentGroup.push(ungrouped.shift());
+                while (ungrouped.length) {
+                    while (ungrouped.length && currentGroup[index].collides(ungrouped[0])) {
+                        var next = ungrouped.shift();
+                        currentGroup.push(next);
+                    }
+                    if (index < currentGroup.length - 1) {
+                        index++;
+                    } else {
+                        if (ungrouped.length) {
+                            currentGroup = [];
+                            index = 0;
+                            output.push(currentGroup);
+                            currentGroup.push(ungrouped.shift());
+                        }
+                    }
+                }
+            }
+            return output;
+        }
+        module.exports = DateEvents;
+    },
+    '2': function (require, module, exports, global) {
+        var substitute = require('7'), $ = require('8'), eventTemplate;
+        function Calendar(body) {
+            if (!body)
+                throw new Error('Calendar need a body reference');
+            var calendarTemplate = $('template-calendar');
+            if (!eventTemplate) {
+                eventTemplate = $('template-event').firstChild.innerHTML;
+            }
+            this.element = calendarTemplate.firstChild.cloneNode(true);
+            body.appendChild(this.element);
+        }
+        function draw(event, position, size, where) {
+            var document = this.element.ownerDocument, div = document.createElement('div'), i = event.index;
+            div.innerHTML = substitute(eventTemplate, { index: event.index });
+            div.style.width = size + '%';
+            div.style.top = event.start + 'px';
+            div.style.left = position * size + '%';
+            div.style.height = event.end - event.start + 'px';
+            where.appendChild(div);
+        }
+        Calendar.prototype.plot = function plot(dateEvents) {
+            var groups = dateEvents.groups, context = this, document = context.element.ownerDocument, fragment = document.createDocumentFragment(), target = this.element.firstChild;
+            target.innerHTML = '';
+            if (groups.length) {
+                groups.forEach(function (group) {
+                    var maxSize = 1, positions = {};
+                    group.forEach(function (event) {
+                        var index = 0, done = false;
+                        while (!done) {
+                            var position = positions[index] || (positions[index] = []);
+                            if (position.some(function (plottedEvent) {
+                                    return plottedEvent.collides(event);
+                                })) {
+                                index++;
+                            } else {
+                                maxSize = Math.max(maxSize, index + 1);
+                                event.position = index;
+                                position.push(event);
+                                done = true;
+                            }
+                        }
+                    });
+                    group.forEach(function (event) {
+                        draw.call(context, event, event.position, 100 / maxSize, fragment);
+                    });
+                });
+            }
+            target.appendChild(fragment);
+        };
+        module.exports = Calendar;
+    },
+    '3': function (require, module, exports, global) {
+        var substitute = require('7'), $ = require('8');
+        function YardStick(body) {
+            if (!body)
+                throw new Error('YardStick need a body reference');
+            var yardStickTemplate = $('template-yardstick').cloneNode(true), main = yardStickTemplate.children[0].cloneNode(true), hour = yardStickTemplate.children[1], hourHTML = hour.innerHTML, halfHour = yardStickTemplate.children[2], halfHourHTML = halfHour.innerHTML;
+            for (var i = 9; i < 21; i++) {
+                var h = hour.cloneNode();
+                h.innerHTML = substitute(hourHTML, {
+                    time: i % 12 || 12,
+                    meridian: i < 12 ? 'AM' : 'PM'
+                });
+                main.appendChild(h);
+                var hh = halfHour.cloneNode();
+                hh.innerHTML = substitute(halfHourHTML, { time: i % 12 || 12 });
+                main.appendChild(hh);
+            }
+            var last = hour.cloneNode();
+            last.setAttribute('class', last.getAttribute('class') + ' last');
+            last.innerHTML = substitute(hourHTML, {
+                time: 9,
+                meridian: 'PM'
+            });
+            main.appendChild(last);
+            body.appendChild(main);
+        }
+        module.exports = YardStick;
+    },
+    '4': function (require, module, exports, global) {
+        var E = require('9').GenericError, ErrorDetails = function ErrorDetails(badStart, badEnd, index) {
+                return {
+                    index: '' + index,
+                    who: badStart && badEnd ? 'start, end' : badStart ? 'start' : 'end',
+                    verb: badStart && badEnd ? 'are' : 'is'
+                };
+            };
+        function DateEvent(details, index) {
+            var badStart, badEnd, ED = function () {
+                    return ErrorDetails(badStart, badEnd, index);
+                }, start = details.start, end = details.end;
+            badStart = badEnd = false;
+            if (badStart = isNaN(start), badEnd = isNaN(end), badStart || badEnd) {
+                throw E('event #{index} {who} {verb} not a number', ED());
+            }
+            if (badStart = start < 0, badEnd = end < 0, badStart || badEnd) {
+                throw E('event #{index} {who} {verb} out of bound (too small)', ED());
+            }
+            if (badStart = start > 720, badEnd = end > 720, badStart || badEnd) {
+                throw E('event #{index} {who} {verb} out of bound (too big)', ED());
+            }
+            if (badStart = start % 1 !== 0, badEnd = end % 1 !== 0, badStart || badEnd) {
+                throw E('event #{index} {who} {verb} not an integer', ED());
+            }
+            if (start >= end) {
+                throw E('event #{index} ends before it starts', { index: '' + index });
+            }
+            this.start = start;
+            this.end = end;
+            this.index = index;
+        }
+        DateEvent.prototype.isInRange = function (min, max) {
+            var start = this.start, end = this.end;
+            if (max <= start)
+                return false;
+            if (min >= end)
+                return false;
+            return true;
+        };
+        DateEvent.prototype.collides = function (event) {
+            return this.isInRange(event.start, event.end);
+        };
+        module.exports = DateEvent;
+    },
+    '5': function (require, module, exports, global) {
+        var STRATEGIES = {};
+        STRATEGIES.sortFirstEventsFirst = function sortFirstEventsFirst(a, b) {
+            if (a.start < b.start)
+                return -1;
+            if (a.start == b.start && a.end > b.end)
+                return -1;
+            return a.start == b.start && a.end == b.end ? 0 : 1;
+        };
+        STRATEGIES.promoteTo = function promoteTo(Constructor) {
+            return function (a, i) {
+                return new Constructor(a, i);
+            };
+        };
+        module.exports = STRATEGIES;
+    },
+    '6': function (require, module, exports, global) {
+        module.exports = Array.isArray || function (arg) {
+            return Object.prototype.toString.call(arg) === '[object Array]';
+        };
+    },
+    '7': function (require, module, exports, global) {
+        module.exports = function substitute(string, obj) {
+            return string.replace(/\{(.+?)\}/g, function (a, b) {
+                return obj[b] || '';
+            });
+        };
+    },
+    '8': function (require, module, exports, global) {
+        module.exports = function (id) {
+            var template = document.getElementById(id);
+						var tmp = document.createElement('div');
+						tmp.innerHTML = template.innerHTML;
+            return tmp;
+        };
+    },
+    '9': function (require, module, exports, global) {
+        var format = require('7'), Errors = {
+                GenericError: function GenericError(reason, params) {
+                    return new Error(format(reason, params));
+                }
+            };
+        module.exports = Errors;
+    }
+}, this));
+</script>
+	</head>
+	<body id="body">
+
+</body></html>

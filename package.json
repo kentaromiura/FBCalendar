@@ -1,0 +1,19 @@
+{
+  "name": "fbcalendar",
+  "version": "1.0.0",
+  "description": "Day Calendar Puzzle",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "devDependencies": {
+    "wrapup": "*",
+    "mocha": "*",
+    "expect.js": "*",
+    "singlejs": "*",
+    "elements": "^0.5.0",
+    "jsdom": "^1.0.0-pre.6"
+  },
+  "author": "Cristian Carlesso (@kentaromiura)",
+  "license": "MIT"
+}
