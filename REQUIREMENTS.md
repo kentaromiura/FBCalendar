@@ -16,3 +16,22 @@ In your submission, please implement the calendar with the following input:
 [ {start: 30, end: 150}, {start: 540, end: 600}, {start: 560, end: 620}, {start: 610, end: 670} ];
 
 A screenshot of the expected output is attached.
+
+FAQ
+- Are frameworks such as JQuery, MooTools, etc. allowed?
+
+    Yes, but please include the file with your source code.
+- Is there a maximum bound on the number of events?  
+
+    You can assume a maximum of 100 events for rendering reasons, but your solution should be generalized.
+- What browsers need to be supported? 
+
+    Your solution should work in all modern standards-compliant browsers.
+- Does my solution need to match the image pixel for pixel? 
+
+    No, we will not be testing for pixel matching.
+- How will you be testing my solution? 
+
+    We will be running tests from the browser console by invoking the layOutDay() function. 
+- Your solution should not require a local web server (e.g. run from localhost) or have any other dependencies besides your html/css/js.
+

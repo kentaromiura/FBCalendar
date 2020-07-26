@@ -13,6 +13,8 @@ Changes after that are just informative and to make it build nowadays (I've foun
 In the REQUIREMENTS file you can see what was asked, I was given a week to complete this task.
 If you want to try it works nowadays, just use node 0.12 and follow the readme.
 
+I'm not attaching the screenshot but the solution should be close enough.
+
 
 Notable things from this repo:
 - I used no libraries, but they allow to use any (jQuery or MooTools were in the suggested example, funnily they didn't suggest React even if it was already motion).
